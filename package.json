@@ -31,6 +31,18 @@
       {
         "command": "rspecFold.unfoldDescribeBlocks",
         "title": "RSpec Fold: Unfold All 'describe' Blocks"
+      },
+      {
+        "command": "rspecFold.toggleFolding",
+        "title": "RSpec Fold: Toggle RSpec Folding"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "rspecFold.toggleFolding",
+        "key": "ctrl+alt+/",
+        "mac": "cmd+alt+/",
+        "when": "editorTextFocus && editorLangId == ruby"
       }
     ],
     "configuration": {

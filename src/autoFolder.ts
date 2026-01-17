@@ -1,8 +1,12 @@
 import * as vscode from 'vscode';
 import { detectItBlocks, detectDescribeBlocks } from './blockDetector';
 
+// Fold states: 0 = it folded, 1 = neither folded, 2 = describe folded
+type FoldState = 0 | 1 | 2;
+
 export class AutoFolder {
     private pendingFolds: Map<string, NodeJS.Timeout> = new Map();
+    private foldState: Map<string, FoldState> = new Map();
 
     /**
      * Schedule auto-folding with a delay to handle VS Code timing issues
@@ -46,7 +50,7 @@ export class AutoFolder {
             return;
         }
 
-        // Get the start lines of all blocks (0-based)
+        const uri = editor.document.uri.toString();
         const selectionLines = blocks.map(block => block.startLine);
 
         try {
@@ -63,6 +67,8 @@ export class AutoFolder {
                 selectionLines: selectionLines,
                 levels: 1
             });
+
+            this.foldState.set(uri, 0);
         } catch (error) {
             console.warn('RSpec Fold: Failed to fold blocks', error);
         }
@@ -90,7 +96,7 @@ export class AutoFolder {
     }
 
     /**
-     * Fold all non-root 'describe' and 'context' blocks in the given editor
+     * Fold all non-root 'describe' blocks in the given editor
      */
     async foldDescribeBlocks(editor: vscode.TextEditor): Promise<void> {
         const blocks = detectDescribeBlocks(editor.document);
@@ -99,6 +105,7 @@ export class AutoFolder {
             return;
         }
 
+        const uri = editor.document.uri.toString();
         const selectionLines = blocks.map(block => block.startLine);
 
         try {
@@ -111,13 +118,15 @@ export class AutoFolder {
                 selectionLines: selectionLines,
                 levels: 1
             });
+
+            this.foldState.set(uri, 2);
         } catch (error) {
             console.warn('RSpec Fold: Failed to fold describe blocks', error);
         }
     }
 
     /**
-     * Unfold all non-root 'describe' and 'context' blocks in the given editor
+     * Unfold all non-root 'describe' blocks in the given editor
      */
     async unfoldDescribeBlocks(editor: vscode.TextEditor): Promise<void> {
         const blocks = detectDescribeBlocks(editor.document);
@@ -138,6 +147,27 @@ export class AutoFolder {
     }
 
     /**
+     * 3-way toggle: it folded → neither → describe folded → it folded → ...
+     */
+    async toggleFolding(editor: vscode.TextEditor): Promise<void> {
+        const uri = editor.document.uri.toString();
+        const currentState = this.foldState.get(uri) ?? 0; // Default to 0 (it folded) since auto-fold on open
+
+        if (currentState === 0) {
+            // it folded → neither
+            await this.unfoldItBlocks(editor);
+            this.foldState.set(uri, 1);
+        } else if (currentState === 1) {
+            // neither → describe folded
+            await this.foldDescribeBlocks(editor);
+        } else {
+            // describe folded → it folded
+            await this.unfoldDescribeBlocks(editor);
+            await this.foldItBlocks(editor);
+        }
+    }
+
+    /**
      * Clean up pending timeouts
      */
     dispose(): void {
@@ -145,5 +175,6 @@ export class AutoFolder {
             clearTimeout(timeout);
         }
         this.pendingFolds.clear();
+        this.foldState.clear();
     }
 }

@@ -87,6 +87,13 @@ function activate(context) {
             await autoFolder.unfoldDescribeBlocks(editor);
         }
     }));
+    // Register 3-way toggle command
+    context.subscriptions.push(vscode.commands.registerCommand('rspecFold.toggleFolding', async () => {
+        const editor = vscode.window.activeTextEditor;
+        if (editor && (0, utils_1.isRSpecFile)(editor.document)) {
+            await autoFolder.toggleFolding(editor);
+        }
+    }));
     // Fold if an RSpec file is already open when extension activates
     const currentEditor = vscode.window.activeTextEditor;
     if (currentEditor && (0, utils_1.isRSpecFile)(currentEditor.document)) {

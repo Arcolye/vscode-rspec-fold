@@ -39,6 +39,7 @@ const blockDetector_1 = require("./blockDetector");
 class AutoFolder {
     constructor() {
         this.pendingFolds = new Map();
+        this.foldState = new Map();
     }
     /**
      * Schedule auto-folding with a delay to handle VS Code timing issues
@@ -73,7 +74,7 @@ class AutoFolder {
         if (blocks.length === 0) {
             return;
         }
-        // Get the start lines of all blocks (0-based)
+        const uri = editor.document.uri.toString();
         const selectionLines = blocks.map(block => block.startLine);
         try {
             // First unfold at these lines to ensure we're targeting the 'it' blocks,
@@ -88,6 +89,7 @@ class AutoFolder {
                 selectionLines: selectionLines,
                 levels: 1
             });
+            this.foldState.set(uri, 0);
         }
         catch (error) {
             console.warn('RSpec Fold: Failed to fold blocks', error);
@@ -112,13 +114,14 @@ class AutoFolder {
         }
     }
     /**
-     * Fold all non-root 'describe' and 'context' blocks in the given editor
+     * Fold all non-root 'describe' blocks in the given editor
      */
     async foldDescribeBlocks(editor) {
         const blocks = (0, blockDetector_1.detectDescribeBlocks)(editor.document);
         if (blocks.length === 0) {
             return;
         }
+        const uri = editor.document.uri.toString();
         const selectionLines = blocks.map(block => block.startLine);
         try {
             await vscode.commands.executeCommand('editor.unfold', {
@@ -129,13 +132,14 @@ class AutoFolder {
                 selectionLines: selectionLines,
                 levels: 1
             });
+            this.foldState.set(uri, 2);
         }
         catch (error) {
             console.warn('RSpec Fold: Failed to fold describe blocks', error);
         }
     }
     /**
-     * Unfold all non-root 'describe' and 'context' blocks in the given editor
+     * Unfold all non-root 'describe' blocks in the given editor
      */
     async unfoldDescribeBlocks(editor) {
         const blocks = (0, blockDetector_1.detectDescribeBlocks)(editor.document);
@@ -153,6 +157,27 @@ class AutoFolder {
         }
     }
     /**
+     * 3-way toggle: it folded → neither → describe folded → it folded → ...
+     */
+    async toggleFolding(editor) {
+        const uri = editor.document.uri.toString();
+        const currentState = this.foldState.get(uri) ?? 0; // Default to 0 (it folded) since auto-fold on open
+        if (currentState === 0) {
+            // it folded → neither
+            await this.unfoldItBlocks(editor);
+            this.foldState.set(uri, 1);
+        }
+        else if (currentState === 1) {
+            // neither → describe folded
+            await this.foldDescribeBlocks(editor);
+        }
+        else {
+            // describe folded → it folded
+            await this.unfoldDescribeBlocks(editor);
+            await this.foldItBlocks(editor);
+        }
+    }
+    /**
      * Clean up pending timeouts
      */
     dispose() {
@@ -160,6 +185,7 @@ class AutoFolder {
             clearTimeout(timeout);
         }
         this.pendingFolds.clear();
+        this.foldState.clear();
     }
 }
 exports.AutoFolder = AutoFolder;

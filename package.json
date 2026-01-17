@@ -1,0 +1,67 @@
+{
+  "name": "rspec-fold",
+  "displayName": "RSpec Fold",
+  "description": "Automatically fold 'it' blocks when opening RSpec test files",
+  "version": "1.0.0",
+  "publisher": "your-publisher-id",
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onLanguage:ruby"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "rspecFold.foldItBlocks",
+        "title": "RSpec Fold: Fold All 'it' Blocks"
+      },
+      {
+        "command": "rspecFold.unfoldItBlocks",
+        "title": "RSpec Fold: Unfold All 'it' Blocks"
+      }
+    ],
+    "configuration": {
+      "title": "RSpec Fold",
+      "properties": {
+        "rspecFold.autoFoldOnOpen": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically fold 'it' blocks when opening RSpec files"
+        },
+        "rspecFold.foldDelay": {
+          "type": "number",
+          "default": 250,
+          "description": "Delay in milliseconds before auto-folding (increase if folding fails)"
+        },
+        "rspecFold.includeSpecifyBlocks": {
+          "type": "boolean",
+          "default": true,
+          "description": "Also fold 'specify' blocks (RSpec alias for 'it')"
+        },
+        "rspecFold.filePattern": {
+          "type": "string",
+          "default": "**/spec/**/*_spec.rb",
+          "description": "Glob pattern for RSpec files"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.74.0",
+    "@types/node": "^18.x",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "minimatch": "^9.0.0"
+  }
+}

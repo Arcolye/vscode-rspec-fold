@@ -1,18 +1,18 @@
 import * as vscode from 'vscode';
 
-export interface ItBlock {
-    startLine: number;  // 0-based line number of the 'it' or 'specify' line
+export interface RSpecBlock {
+    startLine: number;  // 0-based line number of the block start
     endLine: number;    // 0-based line number of the matching 'end'
 }
 
 /**
  * Detects all 'it' and 'specify' blocks in an RSpec file
  */
-export function detectItBlocks(document: vscode.TextDocument): ItBlock[] {
+export function detectItBlocks(document: vscode.TextDocument): RSpecBlock[] {
     const config = vscode.workspace.getConfiguration('rspecFold');
     const includeSpecify = config.get<boolean>('includeSpecifyBlocks', true);
 
-    const blocks: ItBlock[] = [];
+    const blocks: RSpecBlock[] = [];
     const lineCount = document.lineCount;
 
     // Pattern for 'it' and optionally 'specify' blocks
@@ -75,4 +75,40 @@ function findMatchingEnd(
 
     // No matching end found
     return -1;
+}
+
+/**
+ * Detects all 'describe' blocks in an RSpec file,
+ * excluding root-level blocks (those with no indentation).
+ */
+export function detectDescribeBlocks(document: vscode.TextDocument): RSpecBlock[] {
+    const blocks: RSpecBlock[] = [];
+    const lineCount = document.lineCount;
+
+    // Pattern for 'describe' and 'context' blocks
+    const blockStartPattern = /^(\s+)(describe)\s+/;
+
+    for (let i = 0; i < lineCount; i++) {
+        const line = document.lineAt(i);
+        const text = line.text;
+
+        // Check if this line starts a 'describe' block
+        // The pattern requires at least some indentation (excludes root level)
+        const match = text.match(blockStartPattern);
+        if (match && text.trimEnd().endsWith(' do')) {
+            const indentLength = match[1].length;
+
+            // Find matching 'end' by tracking indentation
+            const endLine = findMatchingEnd(document, i, indentLength);
+
+            if (endLine !== -1) {
+                blocks.push({
+                    startLine: i,
+                    endLine: endLine
+                });
+            }
+        }
+    }
+
+    return blocks;
 }

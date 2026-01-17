@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { detectItBlocks } from './blockDetector';
+import { detectItBlocks, detectDescribeBlocks } from './blockDetector';
 
 export class AutoFolder {
     private pendingFolds: Map<string, NodeJS.Timeout> = new Map();
@@ -86,6 +86,54 @@ export class AutoFolder {
             });
         } catch (error) {
             console.warn('RSpec Fold: Failed to unfold blocks', error);
+        }
+    }
+
+    /**
+     * Fold all non-root 'describe' and 'context' blocks in the given editor
+     */
+    async foldDescribeBlocks(editor: vscode.TextEditor): Promise<void> {
+        const blocks = detectDescribeBlocks(editor.document);
+
+        if (blocks.length === 0) {
+            return;
+        }
+
+        const selectionLines = blocks.map(block => block.startLine);
+
+        try {
+            await vscode.commands.executeCommand('editor.unfold', {
+                selectionLines: selectionLines,
+                levels: 1
+            });
+
+            await vscode.commands.executeCommand('editor.fold', {
+                selectionLines: selectionLines,
+                levels: 1
+            });
+        } catch (error) {
+            console.warn('RSpec Fold: Failed to fold describe blocks', error);
+        }
+    }
+
+    /**
+     * Unfold all non-root 'describe' and 'context' blocks in the given editor
+     */
+    async unfoldDescribeBlocks(editor: vscode.TextEditor): Promise<void> {
+        const blocks = detectDescribeBlocks(editor.document);
+
+        if (blocks.length === 0) {
+            return;
+        }
+
+        const selectionLines = blocks.map(block => block.startLine);
+
+        try {
+            await vscode.commands.executeCommand('editor.unfold', {
+                selectionLines: selectionLines
+            });
+        } catch (error) {
+            console.warn('RSpec Fold: Failed to unfold describe blocks', error);
         }
     }
 

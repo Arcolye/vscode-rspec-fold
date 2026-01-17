@@ -23,6 +23,14 @@
       {
         "command": "rspecFold.unfoldItBlocks",
         "title": "RSpec Fold: Unfold All 'it' Blocks"
+      },
+      {
+        "command": "rspecFold.foldDescribeBlocks",
+        "title": "RSpec Fold: Fold All 'describe' Blocks"
+      },
+      {
+        "command": "rspecFold.unfoldDescribeBlocks",
+        "title": "RSpec Fold: Unfold All 'describe' Blocks"
       }
     ],
     "configuration": {

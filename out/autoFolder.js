@@ -112,6 +112,47 @@ class AutoFolder {
         }
     }
     /**
+     * Fold all non-root 'describe' and 'context' blocks in the given editor
+     */
+    async foldDescribeBlocks(editor) {
+        const blocks = (0, blockDetector_1.detectDescribeBlocks)(editor.document);
+        if (blocks.length === 0) {
+            return;
+        }
+        const selectionLines = blocks.map(block => block.startLine);
+        try {
+            await vscode.commands.executeCommand('editor.unfold', {
+                selectionLines: selectionLines,
+                levels: 1
+            });
+            await vscode.commands.executeCommand('editor.fold', {
+                selectionLines: selectionLines,
+                levels: 1
+            });
+        }
+        catch (error) {
+            console.warn('RSpec Fold: Failed to fold describe blocks', error);
+        }
+    }
+    /**
+     * Unfold all non-root 'describe' and 'context' blocks in the given editor
+     */
+    async unfoldDescribeBlocks(editor) {
+        const blocks = (0, blockDetector_1.detectDescribeBlocks)(editor.document);
+        if (blocks.length === 0) {
+            return;
+        }
+        const selectionLines = blocks.map(block => block.startLine);
+        try {
+            await vscode.commands.executeCommand('editor.unfold', {
+                selectionLines: selectionLines
+            });
+        }
+        catch (error) {
+            console.warn('RSpec Fold: Failed to unfold describe blocks', error);
+        }
+    }
+    /**
      * Clean up pending timeouts
      */
     dispose() {

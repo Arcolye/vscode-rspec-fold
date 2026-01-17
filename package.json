@@ -43,13 +43,8 @@
         },
         "rspecFold.foldDelay": {
           "type": "number",
-          "default": 250,
+          "default": 100,
           "description": "Delay in milliseconds before auto-folding (increase if folding fails)"
-        },
-        "rspecFold.includeSpecifyBlocks": {
-          "type": "boolean",
-          "default": true,
-          "description": "Also fold 'specify' blocks (RSpec alias for 'it')"
         },
         "rspecFold.filePattern": {
           "type": "string",

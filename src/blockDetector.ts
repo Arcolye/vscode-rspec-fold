@@ -9,15 +9,10 @@ export interface RSpecBlock {
  * Detects all 'it' and 'specify' blocks in an RSpec file
  */
 export function detectItBlocks(document: vscode.TextDocument): RSpecBlock[] {
-    const config = vscode.workspace.getConfiguration('rspecFold');
-    const includeSpecify = config.get<boolean>('includeSpecifyBlocks', true);
-
     const blocks: RSpecBlock[] = [];
     const lineCount = document.lineCount;
 
-    // Pattern for 'it' and optionally 'specify' blocks
-    const keywords = includeSpecify ? 'it|specify' : 'it';
-    const blockStartPattern = new RegExp(`^(\\s*)(${keywords})\\s+`);
+    const blockStartPattern = new RegExp(`^(\\s*)(it|specify)\\s+`);
 
     for (let i = 0; i < lineCount; i++) {
         const line = document.lineAt(i);

@@ -1,9 +1,10 @@
 {
   "name": "rspec-fold",
   "displayName": "RSpec Fold",
-  "description": "Automatically fold 'it' blocks when opening RSpec test files",
+  "description": "Auto-fold specs on open",
   "version": "1.0.0",
-  "publisher": "your-publisher-id",
+  "publisher": "Arcolye",
+  "icon": "images/icon.png",
   "engines": {
     "vscode": "^1.74.0"
   },

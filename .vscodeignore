@@ -1,0 +1,7 @@
+.vscode/**
+.ruby-lsp/**
+.claude/**
+src/**
+spec/**
+tsconfig.json
+images/icon_original.png

@@ -1,6 +1,8 @@
 .vscode/**
 .ruby-lsp/**
 .claude/**
+node_modules/**
+out/**
 src/**
 spec/**
 tsconfig.json

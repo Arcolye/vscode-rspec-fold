@@ -2,6 +2,11 @@
 
 RSpec.describe User do
 
+  it "is valid with valid attributes" do
+    user = User.new(email: 'test@example.com')
+    expect(user).to be_valid
+  end
+
   describe '#valid?' do
     it 'returns true when email is present' do
       user = User.new(email: 'test@example.com')

@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { detectItBlocks } from './blockDetector';
+import { detectItBlocks, detectDescribeBlocks } from './blockDetector';
 import { isRSpecFile } from './utils';
 
 export class RSpecFoldingRangeProvider implements vscode.FoldingRangeProvider {
@@ -19,12 +19,21 @@ export class RSpecFoldingRangeProvider implements vscode.FoldingRangeProvider {
             return [];
         }
 
-        const blocks = detectItBlocks(document);
+        const itBlocks = detectItBlocks(document);
+        const describeBlocks = detectDescribeBlocks(document);
 
-        return blocks.map(block => new vscode.FoldingRange(
+        const itRanges = itBlocks.map(block => new vscode.FoldingRange(
             block.startLine,
             block.endLine,
             vscode.FoldingRangeKind.Region
         ));
+
+        const describeRanges = describeBlocks.map(block => new vscode.FoldingRange(
+            block.startLine,
+            block.endLine,
+            vscode.FoldingRangeKind.Region
+        ));
+
+        return [...itRanges, ...describeRanges];
     }
 }

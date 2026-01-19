@@ -12,7 +12,7 @@ export function detectItBlocks(document: vscode.TextDocument): RSpecBlock[] {
     const blocks: RSpecBlock[] = [];
     const lineCount = document.lineCount;
 
-    const blockStartPattern = new RegExp(`^(\\s*)(it|specify)\\s+`);
+    const blockStartPattern = new RegExp(`^(\\s*)(it|specify|scenario)\\s+`);
 
     for (let i = 0; i < lineCount; i++) {
         const line = document.lineAt(i);
@@ -80,8 +80,8 @@ export function detectDescribeBlocks(document: vscode.TextDocument): RSpecBlock[
     const blocks: RSpecBlock[] = [];
     const lineCount = document.lineCount;
 
-    // Pattern for 'describe' and 'context' blocks
-    const blockStartPattern = /^(\s+)(describe)\s+/;
+    // Pattern for 'describe' and 'feature' blocks
+    const blockStartPattern = /^(\s+)(describe|feature)\s+/;
 
     for (let i = 0; i < lineCount; i++) {
         const line = document.lineAt(i);

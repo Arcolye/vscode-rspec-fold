@@ -96,28 +96,43 @@ export class AutoFolder {
     }
 
     /**
-     * Fold all non-root 'describe' blocks in the given editor
+     * Fold all non-root 'describe' blocks (and their 'it' blocks) in the given editor
      */
     async foldDescribeBlocks(editor: vscode.TextEditor): Promise<void> {
-        const blocks = detectDescribeBlocks(editor.document);
+        const describeBlocks = detectDescribeBlocks(editor.document);
+        const itBlocks = detectItBlocks(editor.document);
 
-        if (blocks.length === 0) {
+        if (describeBlocks.length === 0 && itBlocks.length === 0) {
             return;
         }
 
         const uri = editor.document.uri.toString();
-        const selectionLines = blocks.map(block => block.startLine);
+        const describeLines = describeBlocks.map(block => block.startLine);
+        const itLines = itBlocks.map(block => block.startLine);
 
         try {
-            await vscode.commands.executeCommand('editor.unfold', {
-                selectionLines: selectionLines,
-                levels: 1
-            });
+            // Fold it blocks first (inner), then describe blocks (outer)
+            if (itLines.length > 0) {
+                await vscode.commands.executeCommand('editor.unfold', {
+                    selectionLines: itLines,
+                    levels: 1
+                });
+                await vscode.commands.executeCommand('editor.fold', {
+                    selectionLines: itLines,
+                    levels: 1
+                });
+            }
 
-            await vscode.commands.executeCommand('editor.fold', {
-                selectionLines: selectionLines,
-                levels: 1
-            });
+            if (describeLines.length > 0) {
+                await vscode.commands.executeCommand('editor.unfold', {
+                    selectionLines: describeLines,
+                    levels: 1
+                });
+                await vscode.commands.executeCommand('editor.fold', {
+                    selectionLines: describeLines,
+                    levels: 1
+                });
+            }
 
             this.foldState.set(uri, 2);
         } catch (error) {
@@ -126,21 +141,31 @@ export class AutoFolder {
     }
 
     /**
-     * Unfold all non-root 'describe' blocks in the given editor
+     * Unfold all non-root 'describe' blocks (and their 'it' blocks) in the given editor
      */
     async unfoldDescribeBlocks(editor: vscode.TextEditor): Promise<void> {
-        const blocks = detectDescribeBlocks(editor.document);
+        const describeBlocks = detectDescribeBlocks(editor.document);
+        const itBlocks = detectItBlocks(editor.document);
 
-        if (blocks.length === 0) {
+        if (describeBlocks.length === 0 && itBlocks.length === 0) {
             return;
         }
 
-        const selectionLines = blocks.map(block => block.startLine);
+        const describeLines = describeBlocks.map(block => block.startLine);
+        const itLines = itBlocks.map(block => block.startLine);
 
         try {
-            await vscode.commands.executeCommand('editor.unfold', {
-                selectionLines: selectionLines
-            });
+            // Unfold describe blocks first (outer), then it blocks (inner)
+            if (describeLines.length > 0) {
+                await vscode.commands.executeCommand('editor.unfold', {
+                    selectionLines: describeLines
+                });
+            }
+            if (itLines.length > 0) {
+                await vscode.commands.executeCommand('editor.unfold', {
+                    selectionLines: itLines
+                });
+            }
         } catch (error) {
             console.warn('RSpec Fold: Failed to unfold describe blocks', error);
         }

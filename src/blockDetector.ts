@@ -80,7 +80,7 @@ export function detectDescribeBlocks(document: vscode.TextDocument): RSpecBlock[
     const blocks: RSpecBlock[] = [];
     const lineCount = document.lineCount;
 
-    // Pattern for 'describe' and 'context' blocks
+    // Pattern for 'describe' blocks
     const blockStartPattern = /^(\s+)(describe)\s+/;
 
     for (let i = 0; i < lineCount; i++) {

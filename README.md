@@ -1,27 +1,19 @@
 # RSpec Fold
 
 Auto-folds `it` blocks when you open spec files, letting you see the specs at a glance.
-Cycle through 3 folding levels: `it` -> no folding -> `describe` with `Cmd+Option+/`
 
-## Usage
+Cycle through 3 folding levels with `Cmd+Option+/`: `describe` -> `it` -> no folding
 
-### Keyboard Shortcut
+## Keyboard Shortcut
 
 | Shortcut | Mac | Windows/Linux |
 |----------|-----|---------------|
 | Toggle RSpec Folding | `Cmd+Option+/` | `Ctrl+Alt+/` |
 
-Cycles through: `it` folded → no folding → `describe` folded
-
-### Commands
-
-Open the Command Palette (`Cmd+Shift+P` / `Ctrl+Shift+P`) and search for:
-
-- `RSpec Fold: Toggle RSpec Folding`
-- `RSpec Fold: Fold All 'it' Blocks`
-- `RSpec Fold: Unfold All 'it' Blocks`
-- `RSpec Fold: Fold All 'describe' Blocks`
-- `RSpec Fold: Unfold All 'describe' Blocks`
+Cycles through:
+- `describe`-level overview
+- individual `it`-level specs
+- complete test implementations (no folding)
 
 ## Settings
 

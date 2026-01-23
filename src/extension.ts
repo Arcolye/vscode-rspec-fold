@@ -19,54 +19,6 @@ export function activate(context: vscode.ExtensionContext) {
         })
     );
 
-    // Register manual fold command
-    context.subscriptions.push(
-        vscode.commands.registerCommand('rspecFold.foldItBlocks', async () => {
-            const editor = vscode.window.activeTextEditor;
-            if (editor && isRSpecFile(editor.document)) {
-                await autoFolder.foldItBlocks(editor);
-            } else {
-                vscode.window.showInformationMessage(
-                    'RSpec Fold: Current file is not an RSpec file'
-                );
-            }
-        })
-    );
-
-    // Register manual unfold command
-    context.subscriptions.push(
-        vscode.commands.registerCommand('rspecFold.unfoldItBlocks', async () => {
-            const editor = vscode.window.activeTextEditor;
-            if (editor && isRSpecFile(editor.document)) {
-                await autoFolder.unfoldItBlocks(editor);
-            }
-        })
-    );
-
-    // Register fold describe blocks command
-    context.subscriptions.push(
-        vscode.commands.registerCommand('rspecFold.foldDescribeBlocks', async () => {
-            const editor = vscode.window.activeTextEditor;
-            if (editor && isRSpecFile(editor.document)) {
-                await autoFolder.foldDescribeBlocks(editor);
-            } else {
-                vscode.window.showInformationMessage(
-                    'RSpec Fold: Current file is not an RSpec file'
-                );
-            }
-        })
-    );
-
-    // Register unfold describe blocks command
-    context.subscriptions.push(
-        vscode.commands.registerCommand('rspecFold.unfoldDescribeBlocks', async () => {
-            const editor = vscode.window.activeTextEditor;
-            if (editor && isRSpecFile(editor.document)) {
-                await autoFolder.unfoldDescribeBlocks(editor);
-            }
-        })
-    );
-
     // Register 3-way toggle command
     context.subscriptions.push(
         vscode.commands.registerCommand('rspecFold.toggleFolding', async () => {

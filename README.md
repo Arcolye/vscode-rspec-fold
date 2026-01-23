@@ -21,4 +21,3 @@ Cycles through:
 |---------|---------|-------------|
 | `rspecFold.autoFoldOnOpen` | `true` | Auto-fold `it` blocks when opening spec files |
 | `rspecFold.foldDelay` | `100` | Delay (ms) before auto-folding |
-| `rspecFold.filePattern` | `**/spec/**/*_spec.rb` | Glob pattern for RSpec files |

@@ -47,11 +47,6 @@
           "type": "number",
           "default": 100,
           "description": "Delay in milliseconds before auto-folding (increase if folding fails)"
-        },
-        "rspecFold.filePattern": {
-          "type": "string",
-          "default": "**/spec/**/*_spec.rb",
-          "description": "Glob pattern for RSpec files"
         }
       }
     }
@@ -66,8 +61,5 @@
     "@types/vscode": "^1.74.0",
     "esbuild": "^0.27.2",
     "typescript": "^5.0.0"
-  },
-  "dependencies": {
-    "minimatch": "^9.0.0"
   }
 }

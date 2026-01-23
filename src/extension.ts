@@ -1,5 +1,4 @@
 import * as vscode from 'vscode';
-import { RSpecFoldingRangeProvider } from './rspecFoldingProvider';
 import { AutoFolder } from './autoFolder';
 import { isRSpecFile } from './utils';
 
@@ -7,15 +6,6 @@ let autoFolder: AutoFolder;
 
 export function activate(context: vscode.ExtensionContext) {
     console.log('RSpec Fold extension activated');
-
-    // Register the FoldingRangeProvider for Ruby files
-    const foldingProvider = new RSpecFoldingRangeProvider();
-    context.subscriptions.push(
-        vscode.languages.registerFoldingRangeProvider(
-            { language: 'ruby', scheme: 'file' },
-            foldingProvider
-        )
-    );
 
     // Initialize auto-folder
     autoFolder = new AutoFolder();
